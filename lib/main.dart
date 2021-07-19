@@ -40,6 +40,48 @@ class _MyHomePageState extends State<MyHomePage> {
   static const platform = const MethodChannel('samples.flutter.dev/cert');
   String frontKey = "    ";
   String backKey = "    ";
+  String _certificateDatas = "unknown";
+  String _eightDigitCode = "12345678";
+  String firstFourCode = "";
+  String secondFourCode = "";
+
+  @override
+  void initState() {
+    super.initState();
+    //_onCreate();
+  }
+
+
+  Future<void> _onCreate() async {
+    String certificateDatas;
+    try {
+      certificateDatas = await platform.invokeMethod("onCreate");
+      setState(() {
+        _certificateDatas = certificateDatas;
+      });
+    } on PlatformException catch (e) {
+      print(e);
+    }
+
+  }
+
+  Future<void> _buttonClicked3() async {
+    String eightDigitCode;
+    try {
+      eightDigitCode = await platform.invokeMethod("buttonClicked");
+      setState(() {
+        _eightDigitCode = eightDigitCode;
+        firstFourCode = _eightDigitCode.substring(0,4);
+        secondFourCode = _eightDigitCode.substring(4, 8);
+      });
+      print("!!!@@" + _eightDigitCode + "@@!!!\n");
+      Future.delayed(const Duration(milliseconds: 1000), () {
+        _onCreate();
+      });
+    } on PlatformException catch (e) {
+      print(e);
+    }
+  }
 
   void buttonClicked() {
     _startSetting();
@@ -109,7 +151,9 @@ class _MyHomePageState extends State<MyHomePage> {
                       child: RaisedButton(
                         child: Text('인증서 가져오기'),
                         onPressed: () {
-                          buttonClicked();
+                          //buttonClicked();
+                          _buttonClicked3();
+                          print(_eightDigitCode);
                         }, // fun here
                       ),
                     ),
@@ -134,7 +178,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           child: Padding(
                             padding: const EdgeInsets.fromLTRB(36, 10, 36, 10),
                             child: Text(
-                              '0123', // fun here
+                              firstFourCode, // fun here
                               style: TextStyle(
                                 fontSize: 20,
                                 color: Colors.blue,
@@ -155,7 +199,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           child: Padding(
                             padding: const EdgeInsets.fromLTRB(36, 10, 36, 10),
                             child: Text(
-                              '0123', // fun here
+                              secondFourCode, // fun here
                               style: TextStyle(
                                 fontSize: 20,
                                 color: Colors.blue,
@@ -165,7 +209,16 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
                       ],
                     ),
-                  )
+                  ),
+                  SizedBox(height: 16,),
+                  OutlinedButton(
+                    onPressed: () {},
+                    child: Padding(
+                      padding: const EdgeInsets.all(6.0),
+                      child: Text(_certificateDatas),
+                    ),
+
+                  ),
                 ],
               ),
             ),
@@ -174,5 +227,7 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
+
+
 
 
